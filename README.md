@@ -22,7 +22,6 @@ A full-stack monorepo that fetches posts from JSONPlaceholder, stores them in Mo
 
 ```bash
 npm install
-npm run install:all
 ```
 
 ### 2. Configure environment variables

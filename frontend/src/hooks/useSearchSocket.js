@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSocket } from '../lib/socket';
 
 export const useSearchSocket = () => {
@@ -31,12 +31,26 @@ export const useSearchSocket = () => {
     };
   }, []);
 
-  const search = (query) => {
+  const search = useCallback((query) => {
     const socket = socketRef.current || getSocket();
+
+    if (!socket.connected) {
+      setError('Socket is disconnected. Please wait a moment and try again.');
+      setIsSearching(false);
+      return;
+    }
+
     setError(null);
     setIsSearching(true);
 
+    const timeoutId = window.setTimeout(() => {
+      setIsSearching(false);
+      setError('Search timed out. Please try again.');
+    }, 5000);
+
     socket.emit('search', { query }, (response) => {
+      window.clearTimeout(timeoutId);
+
       if (response?.message && !response.posts) {
         setError(response.message);
         setResults([]);
@@ -46,7 +60,7 @@ export const useSearchSocket = () => {
 
       setIsSearching(false);
     });
-  };
+  }, []);
 
   return {
     results,
