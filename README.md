@@ -6,7 +6,7 @@ A full-stack monorepo that fetches posts from JSONPlaceholder, stores them in Mo
 
 - `frontend` - React + Vite + Tailwind UI
 - `backend` - Node.js + Express + Mongoose API
-- WebSocket search server - runs from the backend codebase and can be deployed separately when needed
+- Socket.io search - runs in the same backend process as the REST API
 
 ## Features
 
@@ -40,7 +40,7 @@ Create `frontend/.env`:
 
 ```env
 VITE_API_URL=http://localhost:5000
-VITE_SOCKET_URL=http://localhost:5001
+VITE_SOCKET_URL=http://localhost:5000
 ```
 
 ### 3. Run locally
@@ -51,8 +51,7 @@ npm run dev
 
 This starts:
 - Frontend on `http://localhost:5173`
-- REST API on `http://localhost:5000`
-- Socket.io search server on `http://localhost:5001`
+- REST API + Socket.io backend on `http://localhost:5000`
 
 ## API Endpoints
 
@@ -71,25 +70,20 @@ This starts:
 ### Frontend on Vercel
 
 - Set `VITE_API_URL` to the deployed backend REST URL
-- Set `VITE_SOCKET_URL` to the deployed Socket.io URL if using a separate websocket host
+- Set `VITE_SOCKET_URL` to the same backend URL (or leave it unset if fallback to `VITE_API_URL` is used)
 
-### Backend REST API on Vercel
+### Backend (REST + Socket.io)
 
-- Deploy the `backend` folder as the project root on Vercel
-- Set `MONGO_URI`, `CLIENT_URL`, `SOCKET_CLIENT_URL`, and `JSONPLACEHOLDER_URL`
-- Vercel handles the REST API via serverless functions
-
-### WebSocket server
-
-- Deploy the Socket.io server separately on Render or Railway if persistent websocket support is required
-- Use the same `MONGO_URI` and point frontend `VITE_SOCKET_URL` to that deployment
+- Deploy the `backend` folder as one long-running Node service on providers like Railway, Fly.io, Render paid, or Koyeb
+- Set `MONGO_URI`, `CLIENT_URL`, `SOCKET_CLIENT_URL`, `JSONPLACEHOLDER_URL`, and `PORT`
+- Use the same deployed backend base URL for both `VITE_API_URL` and `VITE_SOCKET_URL`
 
 ## Live URLs
 
 - GitHub repo: add your public repository URL here
 - Frontend live URL: add your Vercel frontend URL here
 - Backend live URL: add your Vercel backend URL here
-- Socket server live URL: add your Render or Railway URL here if used
+- Socket URL: same as backend live URL
 
 ## Notes
 

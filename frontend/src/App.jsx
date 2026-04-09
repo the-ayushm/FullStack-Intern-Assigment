@@ -52,8 +52,8 @@ function App() {
         <section className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr] lg:items-center">
           <SearchBar value={query} onChange={setQuery} />
           <div className="glass-panel rounded-3xl px-6 py-4 text-sm leading-6 text-white/70">
-            <p className="font-semibold text-paper">Live search via Socket.io</p>
-            <p>Typing updates the result set in real time against MongoDB, with debounce to keep requests calm.</p>
+            <p className="font-semibold text-paper">Live search (Socket + API fallback)</p>
+            <p>Socket preferred hai, lekin downtime ya sleep mode me app automatically API search par switch kar deta hai.</p>
           </div>
         </section>
 

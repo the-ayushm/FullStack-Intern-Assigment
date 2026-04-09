@@ -34,4 +34,13 @@ export const fetchAndStorePosts = async () => {
   return parseResponse(response);
 };
 
+export const searchPosts = async (query) => {
+  const searchParams = new URLSearchParams({
+    query: String(query || ''),
+  });
+
+  const response = await fetch(`${API_BASE_URL}/api/posts/search?${searchParams.toString()}`);
+  return parseResponse(response);
+};
+
 export { API_BASE_URL };

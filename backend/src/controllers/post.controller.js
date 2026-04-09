@@ -2,6 +2,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import {
   getPostById,
   getPosts,
+  searchPosts,
   syncPostsFromSource,
 } from '../services/post.service.js';
 
@@ -22,6 +23,17 @@ export const listPosts = asyncHandler(async (request, response) => {
   response.status(200).json({
     success: true,
     ...result,
+  });
+});
+
+export const searchPostsByQuery = asyncHandler(async (request, response) => {
+  const query = String(request.query.query || '');
+  const posts = await searchPosts(query);
+
+  response.status(200).json({
+    success: true,
+    query,
+    posts,
   });
 });
 

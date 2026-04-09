@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getSocket } from '../lib/socket';
+import { searchPosts } from '../lib/api';
 
 export const useSearchSocket = () => {
   const socketRef = useRef(null);
@@ -7,6 +8,11 @@ export const useSearchSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
+
+  const fallbackSearch = useCallback(async (query) => {
+    const response = await searchPosts(query);
+    setResults(response?.posts || []);
+  }, []);
 
   useEffect(() => {
     const socket = getSocket();
@@ -31,12 +37,20 @@ export const useSearchSocket = () => {
     };
   }, []);
 
-  const search = useCallback((query) => {
+  const search = useCallback(async (query) => {
     const socket = socketRef.current || getSocket();
 
     if (!socket.connected) {
-      setError('Socket is disconnected. Please wait a moment and try again.');
-      setIsSearching(false);
+      setError(null);
+      setIsSearching(true);
+      try {
+        await fallbackSearch(query);
+      } catch (requestError) {
+        setError(requestError.message || 'Search failed');
+        setResults([]);
+      } finally {
+        setIsSearching(false);
+      }
       return;
     }
 
@@ -45,7 +59,11 @@ export const useSearchSocket = () => {
 
     const timeoutId = window.setTimeout(() => {
       setIsSearching(false);
-      setError('Search timed out. Please try again.');
+      setError('Socket delayed, switched to API search.');
+      fallbackSearch(query).catch((requestError) => {
+        setError(requestError.message || 'Search failed');
+        setResults([]);
+      });
     }, 5000);
 
     socket.emit('search', { query }, (response) => {
@@ -60,7 +78,7 @@ export const useSearchSocket = () => {
 
       setIsSearching(false);
     });
-  }, []);
+  }, [fallbackSearch]);
 
   return {
     results,
