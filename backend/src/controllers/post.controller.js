@@ -1,6 +1,5 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {
-  ensurePostsSeeded,
   getPostById,
   getPosts,
   syncPostsFromSource,
@@ -17,8 +16,6 @@ export const fetchPosts = asyncHandler(async (request, response) => {
 });
 
 export const listPosts = asyncHandler(async (request, response) => {
-  await ensurePostsSeeded();
-
   const { page, limit } = request.query;
   const result = await getPosts({ page, limit });
 
@@ -29,8 +26,6 @@ export const listPosts = asyncHandler(async (request, response) => {
 });
 
 export const singlePost = asyncHandler(async (request, response) => {
-  await ensurePostsSeeded();
-
   const post = await getPostById(request.params.id);
 
   if (!post) {
