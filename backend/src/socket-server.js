@@ -11,7 +11,7 @@ const PORT = process.env.SOCKET_PORT || process.env.PORT || 5001;
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: true,
     credentials: false,
   })
 );
@@ -26,7 +26,7 @@ app.get('/health', (request, response) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.SOCKET_CLIENT_URL || process.env.CLIENT_URL || '*',
+    origin: true,
     methods: ['GET', 'POST'],
   },
 });
